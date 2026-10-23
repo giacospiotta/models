@@ -1,0 +1,61 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Model catalog",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["version", "updated_at", "reasoning_levels", "temperature_policies", "models"],
+  "properties": {
+    "version": { "type": "integer", "minimum": 1 },
+    "updated_at": { "type": "string", "format": "date" },
+    "description": { "type": "string" },
+    "reasoning_levels": {
+      "type": "array",
+      "items": { "type": "string" },
+      "uniqueItems": true
+    },
+    "temperature_policies": {
+      "type": "array",
+      "items": { "type": "string" },
+      "uniqueItems": true
+    },
+    "models": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/model" }
+    }
+  },
+  "$defs": {
+    "model": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "provider", "model_id", "aliases", "context_window", "max_output_tokens",
+        "reasoning_levels", "reasoning_default", "reasoning_off",
+        "temperature_policy", "temperature_recommended", "reads_pdf", "notes"
+      ],
+      "properties": {
+        "provider": { "type": "string", "enum": ["anthropic", "openai", "gemini", "mistral"] },
+        "model_id": { "type": "string", "minLength": 1 },
+        "aliases": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
+        "context_window": { "type": ["integer", "null"], "minimum": 1 },
+        "max_output_tokens": { "type": ["integer", "null"], "minimum": 1 },
+        "reasoning_levels": {
+          "type": "array",
+          "items": { "type": "string", "enum": ["none", "minimal", "low", "medium", "high", "xhigh", "max"] },
+          "uniqueItems": true
+        },
+        "reasoning_default": {
+          "type": ["string", "null"],
+          "enum": ["none", "minimal", "low", "medium", "high", "xhigh", "max", null]
+        },
+        "reasoning_off": {
+          "type": ["string", "null"],
+          "enum": ["between_tools", "disabled", null]
+        },
+        "temperature_policy": { "type": "string", "enum": ["always", "when_reasoning_off", "never"] },
+        "temperature_recommended": { "type": ["number", "null"], "minimum": 0, "maximum": 2 },
+        "reads_pdf": { "type": "boolean" },
+        "notes": { "type": "string" }
+      }
+    }
+  }
+}
